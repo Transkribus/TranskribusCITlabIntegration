@@ -302,4 +302,9 @@ public class CITlabTranskribusIntegrationTest {
 		String[] input = inputList.toArray(new String[inputList.size()]);
 		return input;
 	}
+	
+	public static void main(String[] args) {
+		CITlabTranskribusIntegrationTest test = new CITlabTranskribusIntegrationTest();
+		test.testHtrTrainWorkflow();
+	}
 }
