@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<trpDocMetadata>
+    <docId>447</docId>
+    <title>Batch1-Final</title>
+    <author>Jeremy Bentham</author>
+    <uploadTimestamp>1424273533637</uploadTimestamp>
+    <genre></genre>
+    <writer></writer>
+    <scriptType>GOTHIC</scriptType>
+    <uploader>philip</uploader>
+    <uploaderId>43</uploaderId>
+    <nrOfPages>433</nrOfPages>
+    <desc></desc>
+    <language></language>
+    <status>0</status>
+    <fimgStoreColl>TrpDoc_DEAT_447</fimgStoreColl>
+    <createdFromTimestamp>0</createdFromTimestamp>
+    <createdToTimestamp>0</createdToTimestamp>
+    <collectionList>
+        <colList>
+            <colId>1</colId>
+            <colName>Bentham</colName>
+            <description>Bentham Collection</description>
+            <defaultForApp>TSX</defaultForApp>
+            <crowdsourcing>false</crowdsourcing>
+            <elearning>false</elearning>
+        </colList>
+    </collectionList>
+</trpDocMetadata>

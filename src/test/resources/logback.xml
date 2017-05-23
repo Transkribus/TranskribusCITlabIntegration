@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- For assistance related to logback-translator or configuration  -->
+<!-- files in general, please contact the logback user mailing list -->
+<!-- at http://www.qos.ch/mailman/listinfo/logback-user             -->
+<!--                                                                -->
+<!-- For professional support please see                            -->
+<!--    http://www.qos.ch/shop/products/professionalSupport         -->
+<!--                                                                -->
+<!-- <configuration scan="true" scanTime="30"> -->
+<configuration>
+<!--     <property name="conversionPattern" value="%d{MM/dd HH:mm:ss.SSS}%X{ip}%X{ua}%X{user} %5p | [%c{1}, %t] %m%n"></property> -->
+    <property name="conversionPattern" value="%d{MM/dd HH:mm:ss.SSS}%X{ip}%X{user}%X{gui} %5p | [%c{1}, %t] %m%n"></property>
+    
+  <!-- Errors were reported during translation. -->
+  <!-- No root logger configuration was found -->
+  <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+    <encoder>
+      <pattern>${conversionPattern}</pattern>
+    </encoder>
+  </appender>
+  
+
+  
+  <logger name="org.glassfish.jersey" level="DEBUG">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="LOGFILE"/>
+  </logger>
+  <logger name="com.mchange" level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="LOGFILE"/>
+  </logger>
+  <logger name="org.apache" level="INFO">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="LOGFILE"/>
+  </logger>
+  <logger name="org.dea" level="DEBUG">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="LOGFILE"/>
+    <appender-ref ref="USER_LOGFILE"/>
+  </logger>
+  <logger name="eu.transkribus" level="DEBUG">
+    <appender-ref ref="CONSOLE"/>
+    <appender-ref ref="LOGFILE"/>
+    <appender-ref ref="USER_LOGFILE"/>
+  </logger>
+  <logger name="eu.transkribus.server.rest.Auth" level="DEBUG">
+    <appender-ref ref="LOGIN_LOG"/>
+  </logger>  
+  <logger name="eu.transkribus.core.io.exec.util.CommandLine" level="DEBUG">
+    <appender-ref ref="LA_TOOLS"/>
+  </logger>
+  <logger name="eu.transkribus.server.io.exec.NcsrTools" level="DEBUG">
+    <appender-ref ref="LA_TOOLS"/>
+  </logger>
+  <logger name="LaToolsDebugExporter" level="DEBUG">
+    <appender-ref ref="LA_TOOLS"/>
+  </logger>
+</configuration>
