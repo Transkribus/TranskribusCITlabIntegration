@@ -12,7 +12,7 @@ public class Config {
 	public final static int NUM_EPOCHS = 3;
 	public final static String LEARN_RATE = "2e-3";
 	public final static String NOISE = "both";
-	public final static int TRAIN_SIZE = 1000;
+	public final static int TRAIN_SIZE = 20;
 	public final static int THREADS = 2;
 	
 	static {

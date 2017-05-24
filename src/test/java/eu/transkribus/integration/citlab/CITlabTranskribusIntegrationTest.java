@@ -47,7 +47,7 @@ public class CITlabTranskribusIntegrationTest {
 
 	@Before
 	public void checkResources() {
-		for (String path : TestFiles.TEST_DOC_NAMES) {
+		for (String path : TestFiles.TEST_DOC_PATHS) {
 			Assert.assertTrue(new File(path).canRead());
 		}
 		logger.info("Resource check is done.");
@@ -71,11 +71,14 @@ public class CITlabTranskribusIntegrationTest {
 	/**
 	 * Load all documents in TEST_DOC_PATHS to ensure they are valid Transkribus
 	 * documents Then try HTR Training workflow
+	 * 
+	 * @throws IOException
 	 */
 	@Test
-	public void testHtrTrainWorkflow() {
+	public void testHtrTrainWorkflow() throws IOException {
 		IBaseline2Polygon laParser = new Baseline2PolygonParser(B2PSeamMultiOriented.class.getName());
-		for (String path : TestFiles.TEST_DOC_NAMES) {
+		for (String path : TestFiles.TEST_DOC_PATHS) {
+			//try to load the document
 			TrpDoc doc = null;
 			try {
 				doc = LocalDocReader.load(path);
@@ -84,7 +87,7 @@ public class CITlabTranskribusIntegrationTest {
 				e.printStackTrace();
 				Assert.fail(e.getMessage());
 			}
-			// check pages
+			// check all page XMLs
 			for (TrpPage page : doc.getPages()) {
 				URL xmlUrl = page.getCurrentTranscript().getUrl();
 				try {
@@ -97,7 +100,9 @@ public class CITlabTranskribusIntegrationTest {
 			}
 
 			File tmpDir = new File(Config.TMP_DIR.getAbsolutePath() + File.separator + UUID.randomUUID());
-			Assert.assertTrue("Could not create tmpDir at: " + tmpDir.getAbsolutePath(), tmpDir.mkdir());
+			if (!tmpDir.mkdir()) {
+				throw new IOException("Could not create tmpDir at: " + tmpDir.getAbsolutePath());
+			}
 			logger.info("Created tmp dir at: " + tmpDir.getAbsolutePath());
 			tmpDirs.add(tmpDir);
 
@@ -106,36 +111,43 @@ public class CITlabTranskribusIntegrationTest {
 			String[] createTrainDataProps = PropertyUtil.setProperty(null, "dict", "true");
 			createTrainDataProps = PropertyUtil.setProperty(createTrainDataProps, "stat", "true");
 
+			final String basePath = tmpDir.getAbsolutePath() + File.separator;
+
 			// init train input path
-			final String trainInputPath = tmpDir.getAbsolutePath() + File.separator + "trainInput";
+			final String trainInputPath = basePath + "trainInput";
 			File trainInputDir = new File(trainInputPath);
-			trainInputDir.mkdir();
 
 			// init traindata Path
-			final String trainDataPath = tmpDir.getAbsolutePath() + File.separator + "trainData";
+			final String trainDataPath = basePath + "trainData";
 			File trainDataDir = new File(trainDataPath);
-			trainDataDir.mkdir();
 
-			// init docExporter
-			DocExporter ex = new DocExporter();
-			ExportOptions opts = Config.HTR_TRAIN_EXPORT_OPTIONS;
-			opts.dir = trainInputPath;
+			// init path
+			final String testInputPath = basePath + "testInput";
+			File testInputDir = new File(testInputPath);
+
+			// init path for line imgs
+			String testDataPath = basePath + "testData";
+			File testDataDir = new File(testDataPath);
+
+			if (!trainInputDir.mkdir() || !trainDataDir.mkdir() || !testInputDir.mkdir() || !testDataDir.mkdir()) {
+				throw new IOException("Could not create all directories in: " + basePath);
+			}
 
 			// pages [1, N-1] are train pages, page N is test page
 			final String trainPages = "1-" + (doc.getNPages() - 1);
 			final String testPage = "" + doc.getNPages();
 
-			// export gt document
-			try {
-				opts.pageIndices = CoreUtils.parseRangeListStr(trainPages, doc.getNPages());
-			} catch (IOException e2) {
-				Assert.fail("Bad range string: " + trainPages);
-			}
+			// init docExporter
+			DocExporter ex = new DocExporter();
+			ExportOptions opts = Config.HTR_TRAIN_EXPORT_OPTIONS;
+			opts.dir = trainInputPath;
+			opts.pageIndices = CoreUtils.parseRangeListStr(trainPages, doc.getNPages());
+
 			try {
 				ex.exportDoc(doc, opts);
 			} catch (Exception e) {
 				e.printStackTrace();
-				Assert.fail("Could not export Train GT document to: " + e.getMessage());
+				Assert.fail("Could not export Train GT document to: " + opts.dir);
 			}
 
 			// process baseline2polygon on all page XMLs
@@ -146,27 +158,14 @@ public class CITlabTranskribusIntegrationTest {
 				Assert.fail("Baseline2polygon failed! " + ioe.getMessage());
 			}
 
-			// init path
-			final String testInputPath = tmpDir.getAbsolutePath() + File.separator + "testInput";
-			File testInputDir = new File(testInputPath);
-			testInputDir.mkdir();
-
-			// init path for line imgs
-			String testDataPath = tmpDir.getAbsolutePath() + File.separator + "testData";
-			File testDataDir = new File(testDataPath);
-			testDataDir.mkdir();
-
 			// set exporter opts
 			opts.dir = testInputPath;
-			try {
-				opts.pageIndices = CoreUtils.parseRangeListStr(testPage, doc.getNPages());
-			} catch (IOException e1) {
-				Assert.fail("Bad range string: " + testPage);
-			}
+			opts.pageIndices = CoreUtils.parseRangeListStr(testPage, doc.getNPages());
 
 			try {
 				ex.exportDoc(doc, opts);
 			} catch (Exception e) {
+				e.printStackTrace();
 				Assert.fail("Could not export Test GT document to: " + e.getMessage());
 			}
 
@@ -179,20 +178,19 @@ public class CITlabTranskribusIntegrationTest {
 			}
 
 			final String charMapFileName = "chars.txt";
+			File charMapTrainFile = new File(trainDataPath + File.separator + charMapFileName);
+			File charMapTestFile = new File(testDataPath + File.separator + charMapFileName);
 			// create Test Data
 			logger.info("Create test data...");
-			trainer.createTrainData(valInput, testDataPath,
-					testDataPath + File.separator + charMapFileName, createTrainDataProps);
-
-			File charMapFile = new File(trainDataPath + File.separator + charMapFileName);
+			trainer.createTrainData(valInput, testDataPath, charMapTestFile.getAbsolutePath(), createTrainDataProps);
 
 			logger.info("Create train data...");
-			trainer.createTrainData(input, trainDataPath, charMapFile.getAbsolutePath(), createTrainDataProps);
+			trainer.createTrainData(input, trainDataPath, charMapTrainFile.getAbsolutePath(), createTrainDataProps);
 
 			File htrInFile = new File(tmpDir.getAbsolutePath() + File.separator + "net_in.sprnn");
-			
+
 			logger.info("Create HTR...");
-			trainer.createHtr(htrInFile.getAbsolutePath(), charMapFile.getAbsolutePath(), null);
+			trainer.createHtr(htrInFile.getAbsolutePath(), charMapTrainFile.getAbsolutePath(), null);
 
 			Assert.assertTrue("Input HTR was not created!", htrInFile.exists());
 
@@ -203,22 +201,19 @@ public class CITlabTranskribusIntegrationTest {
 			File cerTestFile = new File(cerTestFilePath);
 
 			File htrOutFile = new File(tmpDir.getAbsolutePath() + File.separator + "net.sprnn");
-			String[] htrTrainProps = PropertyUtil.setProperty(null, Key.EPOCHS, "" + Config.NUM_EPOCHS); // "200");
-																												// //5;2");
-			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.LEARNINGRATE, Config.LEARN_RATE); // "2e-3");
-																													// //5e-3;1e-3");
-			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.NOISE, Config.NOISE); // "no");
+			String[] htrTrainProps = PropertyUtil.setProperty(null, Key.EPOCHS, "" + Config.NUM_EPOCHS);
+			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.LEARNINGRATE, Config.LEARN_RATE);
+			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.NOISE, Config.NOISE);
 			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.THREADS, "" + Config.THREADS);
-			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.TRAINSIZE, "" + Config.TRAIN_SIZE); // "1000");
-
+			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.TRAINSIZE, "" + Config.TRAIN_SIZE);
 			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.PATH_TRAIN_LOG, cerFile.getAbsolutePath());
 			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.PATH_TEST_LOG, cerTestFile.getAbsolutePath());
-			
+
 			logger.debug("Train HTR...");
 			trainer.trainHtr(htrInFile.getAbsolutePath(), htrOutFile.getAbsolutePath(), trainDataPath, testDataPath,
-						htrTrainProps);
-			
-			//now do final checks
+					htrTrainProps);
+
+			// now do final checks
 			Assert.assertTrue("CerFile was not written!", cerFile.exists() && cerFile.length() > 0);
 			double[] cerVals = null;
 			try {
@@ -226,9 +221,7 @@ public class CITlabTranskribusIntegrationTest {
 			} catch (IOException e) {
 				Assert.fail("Could not parse cerFile!");
 			}
-			Assert.assertNotNull(cerVals);
 			Assert.assertEquals("CER Log does not contain one value per epoch!", Config.NUM_EPOCHS, cerVals.length);
-			
 		}
 	}
 
@@ -288,7 +281,7 @@ public class CITlabTranskribusIntegrationTest {
 				logger.error("Could not build URL: " + imgFile.getAbsolutePath(), e);
 				continue;
 			}
-			
+
 			logger.debug("Running B2P on: " + imgFile.getAbsolutePath());
 			try {
 				laParser.process(img, path, null, null);
@@ -302,8 +295,8 @@ public class CITlabTranskribusIntegrationTest {
 		String[] input = inputList.toArray(new String[inputList.size()]);
 		return input;
 	}
-	
-	public static void main(String[] args) {
+
+	public static void main(String[] args) throws IOException {
 		CITlabTranskribusIntegrationTest test = new CITlabTranskribusIntegrationTest();
 		test.testHtrTrainWorkflow();
 	}
