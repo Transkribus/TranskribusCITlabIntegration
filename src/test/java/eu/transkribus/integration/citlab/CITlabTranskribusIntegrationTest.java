@@ -40,7 +40,7 @@ import eu.transkribus.core.model.beans.pagecontent.PcGtsType;
 import eu.transkribus.core.util.CoreUtils;
 import eu.transkribus.core.util.HtrUtils;
 import eu.transkribus.core.util.PageXmlUtils;
-import eu.transkribus.integration.citlab.Config.CitlabHtrTrainTestParams;
+import eu.transkribus.integration.citlab.Config.CitLabHtrTrainTestParams;
 import eu.transkribus.interfaces.IBaseline2Polygon;
 import eu.transkribus.interfaces.types.Image;
 
@@ -212,7 +212,7 @@ public class CITlabTranskribusIntegrationTest {
 			String cerTestFilePath = tmpDir.getAbsolutePath() + File.separator + "CER_test.txt";
 			File cerTestFile = new File(cerTestFilePath);
 
-			final CitlabHtrTrainTestParams params = Config.DEFAULT_TEST_TRAINING;
+			final CitLabHtrTrainTestParams params = Config.DEFAULT_TEST_TRAINING;
 			
 			File htrOutFile = new File(tmpDir.getAbsolutePath() + File.separator + "net.sprnn");
 			String[] htrTrainProps = PropertyUtil.setProperty(null, Key.EPOCHS, "" + params.getNumEpochs());

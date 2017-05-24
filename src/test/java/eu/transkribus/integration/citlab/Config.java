@@ -9,10 +9,11 @@ public class Config {
 	private final static String TMP_DIR_PATH = System.getProperty("java.io.tmpdir");
 	public final static File TMP_DIR = new File(TMP_DIR_PATH);
 	
+
 	/**
 	 * A param set for executing a training with 3 epochs very quickly
 	 */
-	public final static CitlabHtrTrainTestParams DEFAULT_TEST_TRAINING = new CitlabHtrTrainTestParams(
+	public final static CitLabHtrTrainTestParams DEFAULT_TEST_TRAINING = new CitLabHtrTrainTestParams(
 			3, //just very few epochs 
 			"2e-3", //standard learn rate
 			"both", //standard noise
@@ -24,7 +25,7 @@ public class Config {
 	/**
 	 * Default param set used in Transkribus production
 	 */
-	public final static CitlabHtrTrainTestParams DEFAULT_TRANSKRIBUS_TRAINING = new CitlabHtrTrainTestParams(
+	public final static CitLabHtrTrainTestParams DEFAULT_TRANSKRIBUS_TRAINING = new CitLabHtrTrainTestParams(
 			200,
 			"2e-3",
 			"both",
@@ -32,17 +33,26 @@ public class Config {
 			8
 			);
 	
+	static {
+		HTR_TRAIN_EXPORT_OPTIONS.doWriteImages = true;
+		HTR_TRAIN_EXPORT_OPTIONS.exportAltoXml = false;
+		HTR_TRAIN_EXPORT_OPTIONS.exportPageXml = true;
+		HTR_TRAIN_EXPORT_OPTIONS.pageDirName = "";
+		HTR_TRAIN_EXPORT_OPTIONS.useOcrMasterDir = false;
+		HTR_TRAIN_EXPORT_OPTIONS.writeMets = false;
+	}
+	
 	/**
 	 * Immutable object that holds a configuration set for training the CITlab HTR
 	 *
 	 */
-	public static class CitlabHtrTrainTestParams {
+	public static class CitLabHtrTrainTestParams {
 		private final int numEpochs;
 		private final String learnRate;
 		private final String noise;
 		private final int trainSize;
 		private final int threads;
-		private CitlabHtrTrainTestParams (final int numEpochs, final String learnRate, 
+		private CitLabHtrTrainTestParams (final int numEpochs, final String learnRate, 
 				final String noise, final int trainSize, final int threads) {
 			this.numEpochs = numEpochs;
 			this.learnRate = learnRate;
