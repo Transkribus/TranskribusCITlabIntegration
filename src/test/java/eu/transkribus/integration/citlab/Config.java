@@ -9,18 +9,66 @@ public class Config {
 	private final static String TMP_DIR_PATH = System.getProperty("java.io.tmpdir");
 	public final static File TMP_DIR = new File(TMP_DIR_PATH);
 	
-	public final static int NUM_EPOCHS = 3;
-	public final static String LEARN_RATE = "2e-3";
-	public final static String NOISE = "both";
-	public final static int TRAIN_SIZE = 20;
-	public final static int THREADS = 2;
+	/**
+	 * A param set for executing a training with 3 epochs very quickly
+	 */
+	public final static CitlabHtrTrainTestParams DEFAULT_TEST_TRAINING = new CitlabHtrTrainTestParams(
+			3, //just very few epochs 
+			"2e-3", //standard learn rate
+			"both", //standard noise
+			20, //reduced train size for quick training
+			2 //nr of threads
+			);
 	
-	static {
-		HTR_TRAIN_EXPORT_OPTIONS.doWriteImages = true;
-		HTR_TRAIN_EXPORT_OPTIONS.exportAltoXml = false;
-		HTR_TRAIN_EXPORT_OPTIONS.exportPageXml = true;
-		HTR_TRAIN_EXPORT_OPTIONS.pageDirName = "";
-		HTR_TRAIN_EXPORT_OPTIONS.useOcrMasterDir = false;
-		HTR_TRAIN_EXPORT_OPTIONS.writeMets = false;
+	
+	/**
+	 * Default param set used in Transkribus production
+	 */
+	public final static CitlabHtrTrainTestParams DEFAULT_TRANSKRIBUS_TRAINING = new CitlabHtrTrainTestParams(
+			200,
+			"2e-3",
+			"both",
+			1000,
+			8
+			);
+	
+	/**
+	 * Immutable object that holds a configuration set for training the CITlab HTR
+	 *
+	 */
+	public static class CitlabHtrTrainTestParams {
+		private final int numEpochs;
+		private final String learnRate;
+		private final String noise;
+		private final int trainSize;
+		private final int threads;
+		private CitlabHtrTrainTestParams (final int numEpochs, final String learnRate, 
+				final String noise, final int trainSize, final int threads) {
+			this.numEpochs = numEpochs;
+			this.learnRate = learnRate;
+			this.noise = noise;
+			this.trainSize = trainSize;
+			this.threads = threads;
+		}
+		public int getNumEpochs() {
+			return numEpochs;
+		}
+		public String getLearnRate() {
+			return learnRate;
+		}
+		public String getNoise() {
+			return noise;
+		}
+		public int getTrainSize() {
+			return trainSize;
+		}
+		public int getThreads() {
+			return threads;
+		}
+		@Override
+		public String toString() {
+			return "TrainConfig [numEpochs=" + numEpochs + ", learnRate=" + learnRate + ", noise=" + noise
+					+ ", trainSize=" + trainSize + ", threads=" + threads + "]";
+		}
 	}
 }

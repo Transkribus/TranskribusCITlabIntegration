@@ -40,6 +40,7 @@ import eu.transkribus.core.model.beans.pagecontent.PcGtsType;
 import eu.transkribus.core.util.CoreUtils;
 import eu.transkribus.core.util.HtrUtils;
 import eu.transkribus.core.util.PageXmlUtils;
+import eu.transkribus.integration.citlab.Config.CitlabHtrTrainTestParams;
 import eu.transkribus.interfaces.IBaseline2Polygon;
 import eu.transkribus.interfaces.types.Image;
 
@@ -211,12 +212,14 @@ public class CITlabTranskribusIntegrationTest {
 			String cerTestFilePath = tmpDir.getAbsolutePath() + File.separator + "CER_test.txt";
 			File cerTestFile = new File(cerTestFilePath);
 
+			final CitlabHtrTrainTestParams params = Config.DEFAULT_TEST_TRAINING;
+			
 			File htrOutFile = new File(tmpDir.getAbsolutePath() + File.separator + "net.sprnn");
-			String[] htrTrainProps = PropertyUtil.setProperty(null, Key.EPOCHS, "" + Config.NUM_EPOCHS);
-			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.LEARNINGRATE, Config.LEARN_RATE);
-			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.NOISE, Config.NOISE);
-			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.THREADS, "" + Config.THREADS);
-			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.TRAINSIZE, "" + Config.TRAIN_SIZE);
+			String[] htrTrainProps = PropertyUtil.setProperty(null, Key.EPOCHS, "" + params.getNumEpochs());
+			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.LEARNINGRATE, params.getLearnRate());
+			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.NOISE, params.getNoise());
+			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.THREADS, "" + params.getThreads());
+			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.TRAINSIZE, "" + params.getTrainSize());
 			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.PATH_TRAIN_LOG, cerFile.getAbsolutePath());
 			htrTrainProps = PropertyUtil.setProperty(htrTrainProps, Key.PATH_TEST_LOG, cerTestFile.getAbsolutePath());
 
@@ -232,7 +235,7 @@ public class CITlabTranskribusIntegrationTest {
 			} catch (IOException e) {
 				Assert.fail("Could not parse cerFile!");
 			}
-			Assert.assertEquals("CER Log does not contain one value per epoch!", Config.NUM_EPOCHS, cerVals.length);
+			Assert.assertEquals("CER Log does not contain one value per epoch!", params.getNumEpochs(), cerVals.length);
 		}
 	}
 
