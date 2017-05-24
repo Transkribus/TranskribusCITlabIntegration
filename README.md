@@ -5,7 +5,7 @@ It includes tests that check interoperability of both.
 
 ## Building
 Here is a short guide with steps that need to be performed
-to build the project.
+to build the project and run the tests.
 
 ### Requirements
 - Java >= version 8
