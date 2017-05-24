@@ -4,8 +4,10 @@ import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.UUID;
 
@@ -22,6 +24,7 @@ import org.opencv.core.Core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.planet.tech.trainer.Trainer;
 import de.uro.citlab.module.baseline2polygon.B2PSeamMultiOriented;
 import de.uro.citlab.module.baseline2polygon.Baseline2PolygonParser;
 import de.uro.citlab.module.train.TrainHtr;
@@ -44,6 +47,14 @@ public class CITlabTranskribusIntegrationTest {
 	private static final Logger logger = LoggerFactory.getLogger(CITlabTranskribusIntegrationTest.class);
 
 	private static LinkedList<File> tmpDirs = new LinkedList<>();
+
+	@Before
+	public void checkPlanetJar() throws URISyntaxException {
+		URL url = Trainer.class.getProtectionDomain().getCodeSource().getLocation();
+		File planetJarFile = new File(url.toURI());
+		logger.info("Planet Jar name = " + planetJarFile.getName());
+		logger.info("Last modified = " + new Date(planetJarFile.lastModified()));
+	}
 
 	@Before
 	public void checkResources() {
@@ -78,7 +89,7 @@ public class CITlabTranskribusIntegrationTest {
 	public void testHtrTrainWorkflow() throws IOException {
 		IBaseline2Polygon laParser = new Baseline2PolygonParser(B2PSeamMultiOriented.class.getName());
 		for (String path : TestFiles.TEST_DOC_PATHS) {
-			//try to load the document
+			// try to load the document
 			TrpDoc doc = null;
 			try {
 				doc = LocalDocReader.load(path);
