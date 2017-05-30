@@ -2,10 +2,7 @@ package eu.transkribus.integration.citlab;
 
 import java.io.File;
 
-import eu.transkribus.core.io.DocExporter.ExportOptions;
-
 public class Config {
-	public final static ExportOptions HTR_TRAIN_EXPORT_OPTIONS = new ExportOptions();
 	private final static String TMP_DIR_PATH = System.getProperty("java.io.tmpdir");
 	public final static File TMP_DIR = new File(TMP_DIR_PATH);
 	
@@ -32,15 +29,6 @@ public class Config {
 			1000,
 			8
 			);
-	
-	static {
-		HTR_TRAIN_EXPORT_OPTIONS.doWriteImages = true;
-		HTR_TRAIN_EXPORT_OPTIONS.exportAltoXml = false;
-		HTR_TRAIN_EXPORT_OPTIONS.exportPageXml = true;
-		HTR_TRAIN_EXPORT_OPTIONS.pageDirName = "";
-		HTR_TRAIN_EXPORT_OPTIONS.useOcrMasterDir = false;
-		HTR_TRAIN_EXPORT_OPTIONS.writeMets = false;
-	}
 	
 	/**
 	 * Immutable object that holds a configuration set for training the CITlab HTR
