@@ -10,6 +10,7 @@ to build the project and run the tests.
 ### Requirements
 - Java >= version 8
 - Maven
+- Planet.jar installed via Maven
 - All further dependencies should be gathered via Maven
 
 ### Build steps
