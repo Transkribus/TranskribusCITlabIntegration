@@ -16,6 +16,7 @@ import eu.transkribus.appserver.logic.TrpCITlabHtrReader;
 import eu.transkribus.core.io.LocalDocReader;
 import eu.transkribus.core.model.beans.TrpDoc;
 import eu.transkribus.core.model.beans.TrpPage;
+import eu.transkribus.core.model.beans.TrpTranscriptMetadata;
 import eu.transkribus.core.model.beans.pagecontent.PcGtsType;
 import eu.transkribus.core.model.beans.pagecontent_trp.TrpRegionType;
 import eu.transkribus.core.model.beans.pagecontent_trp.TrpTextRegionType;
@@ -39,6 +40,7 @@ public class AsvDictionaryTest extends ACITlabTranskribusIntegrationTest {
 		TrpDoc doc = LocalDocReader.load(destinationInTmpDir.getAbsolutePath());
 		
 		TrpPage page = doc.getPages().get(0);
+		TrpTranscriptMetadata tmd = page.getCurrentTranscript();
 		
 		//TODO use dicts from DB
 		List<String> dictList = HtrUtils.getDictList();
@@ -49,7 +51,8 @@ public class AsvDictionaryTest extends ACITlabTranskribusIntegrationTest {
 			logger.info("Running HTR with dict: " + d);
 			try {
 				reader.loadDict(d);
-				PcGtsType result = reader.process(doc.getPages().get(0));
+
+				PcGtsType result = reader.process(page, tmd);
 				TrpRegionType region = result.getPage().getTextRegionOrImageRegionOrLineDrawingRegion().get(0);
 				TrpTextRegionType tr = (TrpTextRegionType)region;
 				final String text = tr.getTextLine().get(0).getTextEquiv().getUnicode();

@@ -2,9 +2,7 @@ package eu.transkribus.integration.citlab;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,6 +10,8 @@ import org.slf4j.LoggerFactory;
 import eu.transkribus.appserver.logic.TrpCITlabHtrReader;
 import eu.transkribus.core.io.LocalDocReader;
 import eu.transkribus.core.model.beans.TrpDoc;
+import eu.transkribus.core.model.beans.TrpPage;
+import eu.transkribus.core.model.beans.TrpTranscriptMetadata;
 import eu.transkribus.core.model.beans.pagecontent.PcGtsType;
 import eu.transkribus.core.model.beans.pagecontent_trp.TrpRegionType;
 import eu.transkribus.core.model.beans.pagecontent_trp.TrpTextRegionType;
@@ -34,7 +34,9 @@ public class CITlabTranskribusHtrTest extends ACITlabTranskribusIntegrationTest 
 		TrpDoc doc = LocalDocReader.load(destinationInTmpDir.getAbsolutePath());
 		
 		logger.info("Running HTR...");
-		PcGtsType result = reader.process(doc.getPages().get(0));
+		TrpPage page = doc.getPages().get(0);
+		TrpTranscriptMetadata tmd = page.getCurrentTranscript();
+		PcGtsType result = reader.process(page, tmd);
 		TrpRegionType region = result.getPage().getTextRegionOrImageRegionOrLineDrawingRegion().get(0);
 		TrpTextRegionType tr = (TrpTextRegionType)region;
 		final String text = tr.getTextLine().get(0).getTextEquiv().getUnicode();
