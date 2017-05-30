@@ -29,9 +29,8 @@ public class CITlabTranskribusHtrTest extends ACITlabTranskribusIntegrationTest 
 		
 		reader.loadHtr(htrs.get(0));
 		
-		File resource = new File(TestFiles.BENTHAM_1_PAGE_1_LINE_TEST_DOC_PATH);
-		File destinationInTmpDir = new File(tmpDir.getAbsolutePath() + File.separator + resource.getName());
-		FileUtils.copyDirectory(resource, destinationInTmpDir);		
+		File destinationInTmpDir = super.createCopyOfTestResource(tmpDir, TestFiles.BENTHAM_1_PAGE_1_LINE_TEST_DOC_PATH);
+		
 		TrpDoc doc = LocalDocReader.load(destinationInTmpDir.getAbsolutePath());
 		
 		logger.info("Running HTR...");
@@ -42,5 +41,4 @@ public class CITlabTranskribusHtrTest extends ACITlabTranskribusIntegrationTest 
 		
 		logger.info("HTR succeeded. Result = " + text);		
 	}
-	
 }

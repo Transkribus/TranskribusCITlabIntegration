@@ -104,4 +104,11 @@ public abstract class ACITlabTranskribusIntegrationTest {
 		tmpDirs.add(tmpDir);
 		return tmpDir;
 	}
+	
+	protected File createCopyOfTestResource(File tmpDir, String resourcePath) throws IOException {
+		File resource = new File(resourcePath);
+		File destinationInTmpDir = new File(tmpDir.getAbsolutePath() + File.separator + resource.getName());
+		FileUtils.copyDirectory(resource, destinationInTmpDir);
+		return destinationInTmpDir;
+	}
 }
