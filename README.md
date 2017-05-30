@@ -11,6 +11,7 @@ to build the project and run the tests.
 - Java >= version 8
 - Maven
 - Planet.jar installed via Maven
+- TranskribusAppServerModules project checked out and built (private repository: https://github.com/Transkribus/TranskribusAppServerModules)
 - All further dependencies should be gathered via Maven
 
 ### Build steps
@@ -24,7 +25,7 @@ Clone project and run maven:
 ```
 git clone https://github.com/Transkribus/TranskribusCITlabIntegration
 cd TranskribusCITlabIntegration
-mvn install
+mvn build
 ```
 This will build the project and run the tests included. If you run the tests in an IDE, make sure to set the Java VM arguments as follows (e.g. in Eclipse via the "Run Configurations..." setting):
 ```
