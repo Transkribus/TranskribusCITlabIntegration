@@ -23,7 +23,7 @@ import eu.transkribus.core.model.beans.TrpDoc;
 import eu.transkribus.core.model.beans.TrpPage;
 import eu.transkribus.core.model.beans.pagecontent.PcGtsType;
 import eu.transkribus.core.model.builder.CommonExportPars;
-import eu.transkribus.core.util.HtrUtils;
+import eu.transkribus.core.util.HtrCITlabUtils;
 import eu.transkribus.core.util.PageXmlUtils;
 import eu.transkribus.integration.citlab.Config.CitLabHtrTrainTestParams;
 import eu.transkribus.interfaces.IBaseline2Polygon;
@@ -183,7 +183,7 @@ public class CITlabTranskribusHtrTrainTest extends ACITlabTranskribusIntegration
 			Assert.assertTrue("CerFile was not written!", cerFile.exists() && cerFile.length() > 0);
 			double[] cerVals = null;
 			try {
-				cerVals = HtrUtils.parseCitlabCerFile(cerFile);
+				cerVals = HtrCITlabUtils.parseCitlabCerFile(cerFile);
 			} catch (IOException e) {
 				Assert.fail("Could not parse cerFile!");
 			}
@@ -263,7 +263,7 @@ public class CITlabTranskribusHtrTrainTest extends ACITlabTranskribusIntegration
 			Assert.assertTrue("CerFile was not written!", cerFile.exists() && cerFile.length() > 0);
 			double[] cerVals = null;
 			try {
-				cerVals = HtrUtils.parseCitlabCerFile(cerFile);
+				cerVals = HtrCITlabUtils.parseCitlabCerFile(cerFile);
 			} catch (IOException e) {
 				Assert.fail("Could not parse cerFile!");
 			}

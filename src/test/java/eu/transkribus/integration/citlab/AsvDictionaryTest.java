@@ -3,7 +3,6 @@ package eu.transkribus.integration.citlab;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -20,12 +19,11 @@ import eu.transkribus.core.model.beans.TrpTranscriptMetadata;
 import eu.transkribus.core.model.beans.pagecontent.PcGtsType;
 import eu.transkribus.core.model.beans.pagecontent_trp.TrpRegionType;
 import eu.transkribus.core.model.beans.pagecontent_trp.TrpTextRegionType;
-import eu.transkribus.core.util.HtrUtils;
 
 public class AsvDictionaryTest extends ACITlabTranskribusIntegrationTest {
 	private static final Logger logger = LoggerFactory.getLogger(AsvDictionaryTest.class);
 	/**
-	 * pick a model and try out all dictionaries existing in Transkribus on a single line
+	 * pick a model and try out all dictionaries in dictDir (see test.properties) on a single line recognition
 	 * @throws IOException
 	 */
 	@Test
@@ -42,15 +40,12 @@ public class AsvDictionaryTest extends ACITlabTranskribusIntegrationTest {
 		TrpPage page = doc.getPages().get(0);
 		TrpTranscriptMetadata tmd = page.getCurrentTranscript();
 		
-		//TODO use dicts from DB
-		List<String> dictList = HtrUtils.getDictList();
-		
 		Map<String, Throwable> failedDicts = new HashMap<>();
 		
-		for(String d : dictList) {
-			logger.info("Running HTR with dict: " + d);
+		for(File dictFile : dictList) {
+			logger.info("Running HTR with dict: " + dictFile.getName());
 			try {
-				reader.loadDict(d);
+				reader.loadDict(dictFile);
 
 				PcGtsType result = reader.process(page, tmd);
 				TrpRegionType region = result.getPage().getTextRegionOrImageRegionOrLineDrawingRegion().get(0);
@@ -59,8 +54,8 @@ public class AsvDictionaryTest extends ACITlabTranskribusIntegrationTest {
 				
 				logger.info("HTR succeeded. Result = " + text);
 			} catch (Throwable t) {
-				logger.error("HTR failed with dict = " + d, t);
-				failedDicts.put(d, t);
+				logger.error("HTR failed with dict = " + dictFile.getName(), t);
+				failedDicts.put(dictFile.getName(), t);
 			}
 		}
 		if(!failedDicts.isEmpty()) {

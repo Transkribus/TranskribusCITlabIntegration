@@ -1,9 +1,12 @@
 package eu.transkribus.integration.citlab;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,19 +20,18 @@ import org.opencv.core.Core;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.io.Files;
-
 import de.planet.tech.trainer.Trainer;
 import eu.transkribus.core.model.beans.TrpHtr;
 import eu.transkribus.core.util.HtrCITlabUtils;
+import eu.transkribus.core.util.HtrCITlabUtils.DictFileFilter;
 import eu.transkribus.persistence.logic.HtrManager;
 
 public abstract class ACITlabTranskribusIntegrationTest {
 	private static final Logger logger = LoggerFactory.getLogger(ACITlabTranskribusIntegrationTest.class);
-	
+
 	protected static List<File> tmpDirs = new LinkedList<>();
-	
 	protected static List<TrpHtr> htrs = new LinkedList<>();
+	protected static List<File> dictList = new ArrayList<>(0);
 
 	@Before
 	public void checkPlanetJar() throws URISyntaxException {
@@ -46,26 +48,42 @@ public abstract class ACITlabTranskribusIntegrationTest {
 		}
 		logger.info("Resource check is done.");
 	}
-	
+
 	@Before
-	public void loadHtrs() throws IOException {
-		for(String path : TestFiles.HTR_PATHS) {
+	public void loadHtrs() throws FileNotFoundException {
+		for (String path : TestFiles.HTR_PATHS) {
 			File dir = new File(path);
-			if(!dir.canRead() || !dir.isDirectory()) {
-				throw new IOException("Specified HTR does not exist at: " + path);
+			if (!dir.canRead() || !dir.isDirectory()) {
+				throw new FileNotFoundException("Specified HTR does not exist at: " + path);
 			}
-			if(!new File(path + File.separator + HtrCITlabUtils.CITLAB_SPRNN_FILENAME).exists()) {
-				throw new IOException("Specified HTR does not include a net! path = " + path);
+			if (!new File(path + File.separator + HtrCITlabUtils.CITLAB_SPRNN_FILENAME).exists()) {
+				throw new FileNotFoundException("Specified HTR does not include a net! path = " + path);
 			}
-			//set data that is necessary for testing
+			// set data that is necessary for testing
 			TrpHtr htr = new TrpHtr();
 			htr.setPath(path);
 			htr.setName(dir.getName());
 			htr.setProvider(HtrCITlabUtils.PROVIDER_CITLAB);
 			HtrManager.loadDataFromFileSystem(htr);
-			
+
 			htrs.add(htr);
 		}
+	}
+
+	/**
+	 * 
+	 * TODO use TrpDict objects instead of Files
+	 * @throws FileNotFoundException
+	 */
+	@Before
+	public void loadDicts() throws FileNotFoundException {
+		File dictDir = new File(Config.getDictPath());
+		if (!dictDir.isDirectory()) {
+			throw new FileNotFoundException(
+					"Check your config. Dictionary path is not a directory: " + Config.getDictPath());
+		}
+		File[] dictFiles = dictDir.listFiles(new DictFileFilter());
+		dictList = Arrays.asList(dictFiles);
 	}
 
 	@Before
@@ -83,7 +101,6 @@ public abstract class ACITlabTranskribusIntegrationTest {
 		Assert.assertTrue(Config.TMP_DIR.canWrite());
 	}
 
-	
 	@After
 	public void cleanup() {
 		for (File dir : tmpDirs) {
@@ -104,7 +121,7 @@ public abstract class ACITlabTranskribusIntegrationTest {
 		tmpDirs.add(tmpDir);
 		return tmpDir;
 	}
-	
+
 	protected File createCopyOfTestResource(File tmpDir, String resourcePath) throws IOException {
 		File resource = new File(resourcePath);
 		File destinationInTmpDir = new File(tmpDir.getAbsolutePath() + File.separator + resource.getName());

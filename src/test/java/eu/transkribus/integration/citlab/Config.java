@@ -2,10 +2,20 @@ package eu.transkribus.integration.citlab;
 
 import java.io.File;
 
+import eu.transkribus.core.io.util.TrpProperties;
+
 public class Config {
 	private final static String TMP_DIR_PATH = System.getProperty("java.io.tmpdir");
 	public final static File TMP_DIR = new File(TMP_DIR_PATH);
+	private final static TrpProperties TEST_PROPS;
 	
+	static {
+		TEST_PROPS = new TrpProperties("test.properties");
+	}
+	
+	public static String getDictPath() {
+		return TEST_PROPS.getString("dictDir");
+	}
 
 	/**
 	 * A param set for executing a training with 3 epochs very quickly
