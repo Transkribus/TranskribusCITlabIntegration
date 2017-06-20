@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<trpDocMetadata>
+    <docId>18718</docId>
+    <title>TEST_CITlab_Konzilsprotokolle M4</title>
+    <author></author>
+    <uploadTimestamp>1493822830171</uploadTimestamp>
+    <genre></genre>
+    <writer></writer>
+    <scriptType>HANDWRITTEN</scriptType>
+    <uploader>guenter.hackl@uibk.ac.at</uploader>
+    <uploaderId>206</uploaderId>
+    <nrOfPages>28</nrOfPages>
+    <desc></desc>
+    <language></language>
+    <status>0</status>
+    <fimgStoreColl>TrpDoc_DEA_18718</fimgStoreColl>
+    <createdFromTimestamp>0</createdFromTimestamp>
+    <createdToTimestamp>0</createdToTimestamp>
+    <collectionList>
+        <colList>
+            <colId>4042</colId>
+            <colName>CITlab HTR GT</colName>
+            <description>created by philip</description>
+            <crowdsourcing>false</crowdsourcing>
+            <elearning>false</elearning>
+        </colList>
+    </collectionList>
+</trpDocMetadata>
