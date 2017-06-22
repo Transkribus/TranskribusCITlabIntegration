@@ -27,7 +27,7 @@ public class CITlabTranskribusHtrTest extends ACITlabTranskribusIntegrationTest 
 		final File tmpDir = super.createTmpDir();
 		TrpCITlabHtrReader reader = new TrpCITlabHtrReader(tmpDir);
 		
-		reader.loadHtr(htrs.get(0));
+		reader.loadHtr(htrs.get(0), false);
 		
 		File destinationInTmpDir = super.createCopyOfTestResource(tmpDir, TestFiles.BENTHAM_1_PAGE_1_LINE_TEST_DOC_PATH);
 		

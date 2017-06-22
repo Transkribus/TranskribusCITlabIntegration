@@ -18,7 +18,7 @@ public class TestFiles {
 	 * Those docs will be used for training tests
 	 */
 	public final static String[] TRAIN_TEST_DOC_PATHS = {
-			BENTHAM_6_PAGES_TEST_DOC_PATH
+			KONZILSPROTOKOLLE_5_PAGES_TEST_DOC_PATH
 			};
 	
 	public final static String HTR_BASE_PATH = BASE_PATH + "HTR/";

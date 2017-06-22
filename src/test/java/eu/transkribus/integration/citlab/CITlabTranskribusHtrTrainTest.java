@@ -239,6 +239,17 @@ public class CITlabTranskribusHtrTrainTest extends ACITlabTranskribusIntegration
 			trainer.createHtr();
 			logger.info("Train HTR...");
 			trainer.runTraining();
+			
+			File cerFile = trainer.getCerLogFile();
+			// now do final checks
+			Assert.assertTrue("CerFile was not written!", cerFile.exists() && cerFile.length() > 0);
+			double[] cerVals = null;
+			try {
+				cerVals = HtrCITlabUtils.parseCitlabCerFile(cerFile);
+			} catch (IOException e) {
+				Assert.fail("Could not parse cerFile!");
+			}
+			Assert.assertEquals("CER Log does not contain one value per epoch!", trainer.getNumEpochs(), cerVals.length);
 		
 			//test moveFiles()
 			File testStorageDir = new File(tmpDir.getAbsolutePath() + "_storage");
@@ -257,17 +268,6 @@ public class CITlabTranskribusHtrTrainTest extends ACITlabTranskribusIntegration
 			for(File f : files) {
 				Assert.assertTrue("Could not read stored file: " + f.getAbsolutePath(), f.canRead());
 			}
-			
-			File cerFile = trainer.getCerLogFile();
-			// now do final checks
-			Assert.assertTrue("CerFile was not written!", cerFile.exists() && cerFile.length() > 0);
-			double[] cerVals = null;
-			try {
-				cerVals = HtrCITlabUtils.parseCitlabCerFile(cerFile);
-			} catch (IOException e) {
-				Assert.fail("Could not parse cerFile!");
-			}
-			Assert.assertEquals("CER Log does not contain one value per epoch!", trainer.getNumEpochs(), cerVals.length);
 		}
 	}
 }
