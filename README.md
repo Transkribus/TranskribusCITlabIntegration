@@ -25,7 +25,7 @@ Clone project and run maven:
 ```
 git clone https://github.com/Transkribus/TranskribusCITlabIntegration
 cd TranskribusCITlabIntegration
-mvn build
+mvn install
 ```
 This will build the project and run the tests included. If you run the tests in an IDE, make sure to set the Java VM arguments as follows (e.g. in Eclipse via the "Run Configurations..." setting):
 ```
